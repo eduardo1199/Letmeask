@@ -1,10 +1,10 @@
 #page-auth{
     display:flex;
-    align-items:stretch;
-    height: 100vh;
+    align-items:stretch; //Itens-flex são esticados de tal maneira que o tamanho da caixa de margem do item seja o mesmo da linha, respeitando as restrições de comprimento e altura.
+    height: 100vh; //div ocupe 100% da tela verticalmente
 
     aside{
-        flex: 7;
+        flex: 7; //ocupe 100% do seu espaçamento com flex 7
         
         background: #835afd;
         color: #fff;
@@ -93,7 +93,7 @@
         display: flex;
         align-items: center;
 
-        &::before{
+        &::before{ //adicionar antes
             content:'';
             flex: 1;
             height:1px;
@@ -101,7 +101,7 @@
             margin-right: 16px;
         }
 
-        &::after{
+        &::after{//adicionar depois
             content:'';
             flex: 1;
             height:1px;
@@ -122,17 +122,17 @@
         justify-content:center;
         align-items: center;
         
-        cursor: pointer;
+        cursor: pointer; //adicionar cursor no bottão após passar o mouse
         border: 0;
 
-        transition: filter 0.2;
+        transition: filter 0.2; //transitar o brilho do filter em 0.2 milisegundo 
 
         img{
             margin-right: 8px;
         }
 
         &:hover{
-            filter: brightness(0.9);
+            filter: brightness(0.9); //após passar o mouse o brilho diminui 10%. 
         }
     }
 }

@@ -20,11 +20,11 @@
         margin-right: 8px;
     }
 
-    &:not(:disabled):hover{
+    &:not(:disabled):hover{ // quando o botão disabled não estiver habilitado, aplique um houver com diminuição do brilho em 10%
         filter: brightness(0.9);
     }
 
-    &:disabled{
+    &:disabled{ //quando o botão estiver desabilitador, aplique.
         opacity: 0.6;
         cursor: not-allowed;
     }

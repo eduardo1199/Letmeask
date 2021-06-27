@@ -4,13 +4,24 @@ import google from '../images/google-icon.svg';
 import '../styles/home.scss';
 import { Button } from '../components/Button';
 import {useHistory} from 'react-router-dom';
+import {useContext} from 'react';
+import {AuthContext} from '../contexts/AuthControler';
 
 export function Home(){
 
     const history = useHistory();
+    const {user, signInWithPopup} = useContext(AuthContext);
 
-    function navegationNewRoom(){
-        history.push('/newRoom');
+
+    async function handleCreateRoom(){
+        if(!user){
+            try {
+               await signInWithPopup();
+            }catch(e){
+                console.log(e.message);
+            }
+        }
+        history.push('/newRoom/new');
     }
 
     return(
@@ -23,7 +34,7 @@ export function Home(){
            <main>
                <div className="main-content">
                     <img src={logo} alt="logo" />
-                    <button className="run" onClick={() => navegationNewRoom()}>
+                    <button className="run" onClick={() => handleCreateRoom()}>
                         <img src={google} alt="" />
                         Crie sua sala com o google
                     </button>
