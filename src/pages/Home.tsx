@@ -4,14 +4,15 @@ import google from '../images/google-icon.svg';
 import '../styles/home.scss';
 import { Button } from '../components/Button';
 import {useHistory} from 'react-router-dom';
-import {useContext} from 'react';
-import {AuthContext} from '../contexts/AuthControler';
+import AthContext from '../hooks/AthContext';
+import {FormEvent, useState} from 'react';
+import {database} from '../services/Firebase';
 
 export function Home(){
 
     const history = useHistory();
-    const {user, signInWithPopup} = useContext(AuthContext);
-
+    const {user, signInWithPopup} = AthContext();
+    const [sala, setSala] = useState('');
 
     async function handleCreateRoom(){
         if(!user){
@@ -21,7 +22,20 @@ export function Home(){
                 console.log(e.message);
             }
         }
-        history.push('/newRoom/new');
+        history.push('/room/new'); 
+    }
+
+    async function handleRoomExisting(event: FormEvent){
+        event.preventDefault();
+        if(sala.trim() === '') return;
+
+        const roomRef = await database.ref(`rooms/${sala}`).get();
+
+        if(!roomRef.exists()){
+            alert("Sala Inexistente!")
+            return;
+        }
+        history.push(`/room/${sala}`);
     }
 
     return(
@@ -39,8 +53,13 @@ export function Home(){
                         Crie sua sala com o google
                     </button>
                     <div className="saparator">Ou entre em uma sala</div>
-                    <form action="">
-                        <input type="text" placeholder="Digite código da sala"/>
+                    <form onSubmit={handleRoomExisting}>
+                        <input 
+                            type="text" 
+                            placeholder="Digite código da sala"
+                            onChange={e => setSala(e.target.value)}
+                            value={sala}
+                        />
                         <Button type="submit" className="button">Entrar na sala</Button>
                     </form>
                </div>

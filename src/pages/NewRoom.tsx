@@ -1,15 +1,40 @@
 import illustration from '../images/illustration.svg';
-import { useContext } from 'react';
 import logo from '../images/logo.svg';
 import '../styles/home.scss';
 import { Button } from '../components/Button';
 import {Link} from 'react-router-dom';
-import { AuthContext } from '../contexts/AuthControler';
+import AthContext from '../hooks/AthContext';
+import {FormEvent, useState} from 'react';
+import {database} from '../services/Firebase';
+import {useHistory} from 'react-router-dom';
 
 export function NewRoom(){
 
-  const {user} = useContext(AuthContext)
+  const {user, signInWithPopup} = AthContext();
+  const [inputValue, setInputValue] = useState('');
+  const history = useHistory();
+  async function handleCreateRoom(event: FormEvent){
+    event.preventDefault();
 
+    if(inputValue.trim() === '') return;
+
+    const roomRef = database.ref('rooms');
+
+    const firebaseRoom = await roomRef.push({
+        title:inputValue,
+        authorid: user?.uid,
+    })
+
+    history.push(`/room/${firebaseRoom.key}`);
+  }
+
+    if(user == null){
+        return(
+            <div className="loading-page">
+                <h1>Loading...</h1>
+            </div>
+        )
+    }  
     return(
         <div id='page-auth'>
            <aside>
@@ -21,8 +46,13 @@ export function NewRoom(){
                <div className="main-content">
                     <img src={logo} alt="logo" />
                     <h2>Criar uma sala</h2>
-                    <form action="">
-                        <input type="text" placeholder="Nome da sala"/>
+                    <form onSubmit={handleCreateRoom}>
+                        <input 
+                            type="text" 
+                            placeholder="Nome da sala"
+                            onChange={e => setInputValue(e.target.value)}
+                            value={inputValue}
+                            />
                         <Button type="submit" className="button">Criar sala</Button>
                     </form>
                     <p>

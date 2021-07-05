@@ -11,7 +11,7 @@ type User = {
 
 type AuthContext = {
  user: User | undefined;
- signInWithPopup: () => Promise<void>; //função que retorna uma promiss
+ signInWithPopup: () => Promise<void>; //função que retorna uma Promise
 }
 
 type AuthControlerProps = {
