@@ -2,11 +2,44 @@ import logoImg from '../images/logo.svg';
 import {Button} from '../components/Button';
 import '../styles/room.scss';
 import {RoomCode} from '../components/RoomCode';
+import { useParams} from 'react-router-dom';
+import { useState, FormEvent } from 'react';
+import useAuth from '../hooks/AthContext';
+import { database } from '../services/Firebase';
+
+type PathName = {
+  id: string;
+}
+
 
 export function Room(){
 
-  function functionTeste(){
-    return;
+  const {user , signInWithPopup}= useAuth();
+  const params = useParams<PathName>();
+  const paramsId: string = params.id;
+  const [newQuestion, setNewQuestion] = useState('');
+  
+  async function createQuestion(event: FormEvent){
+    event.preventDefault();
+
+    if(newQuestion.trim() === ''){
+      return;
+    }
+    if(!user){
+      throw new Error("Invalid User");
+    }
+    let question = {
+      content: newQuestion,
+      author: {
+        name: user.displayName,
+        avatar: user.photoURL,
+      },
+      isHighLight: false,
+      isAnswered: false
+    }
+    await database.ref(`rooms/${paramsId}/questions`).push(question);
+    setNewQuestion('');
+    alert("Comentario Enviado Com Sucesso");
   }
 
   return(
@@ -14,7 +47,7 @@ export function Room(){
       <header>
         <div className="content">
           <img src={logoImg} alt="Logo" />
-          <RoomCode code="wdwdada" />
+          <RoomCode code={params.id} />
         </div>
       </header>
       <main>
@@ -24,11 +57,22 @@ export function Room(){
             4 perguntas
           </span>
         </div>
-        <form onSubmit={functionTeste}>
-          <textarea name="" id="" placeholder="O que voce quer perguntar"/>
+        <form onSubmit={createQuestion}>
+          <textarea 
+            name="question" 
+            placeholder="O que voce quer perguntar" 
+            onChange={e => setNewQuestion(e.target.value)}
+            value={newQuestion}/>
           <div className="form-footer">
+            {!user ? 
             <span>Para enviar uma pergunta, <button>faça seu login.</button></span>
-            <Button className="button" type="submit">Enviar Pergunta</Button>
+            : 
+            <div>
+              <img src={user.photoURL} alt={user.displayName}></img>
+              <span>{user.displayName}</span>
+            </div>
+            }
+            <Button className="button" type="submit" disabled={!user}>Enviar Pergunta</Button>
           </div>
         </form>
       </main>

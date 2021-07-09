@@ -17,7 +17,7 @@ function App() {
           <Route path='/room/new' component={NewRoom}/>
           <Route path='/room/:id' component={Room}/>
         </Switch>
-        </AuthControler>
+      </AuthControler>
     </BrowserRouter>
   );
 }

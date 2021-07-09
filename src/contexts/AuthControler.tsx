@@ -28,7 +28,6 @@ export function AuthControler(props:AuthControlerProps){
    const response =  await auth.signInWithPopup(provider);
    if(response.user){
      const {displayName, photoURL, uid} = response.user;
-
      if(!displayName || !photoURL){
        throw new Error("User not found in Firebase");
      }
