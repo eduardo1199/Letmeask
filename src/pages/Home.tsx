@@ -60,7 +60,7 @@ export function Home(){
                             onChange={e => setSala(e.target.value)}
                             value={sala}
                         />
-                        <Button type="submit" className="button">Entrar na sala</Button>
+                        <Button type="submit">Entrar na sala</Button>
                     </form>
                </div>
            </main>

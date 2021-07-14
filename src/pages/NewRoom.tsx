@@ -10,7 +10,7 @@ import {useHistory} from 'react-router-dom';
 
 export function NewRoom(){
 
-  const {user, signInWithPopup} = AthContext();
+  const {user} = AthContext();
   const [inputValue, setInputValue] = useState('');
   const history = useHistory();
   async function handleCreateRoom(event: FormEvent){
@@ -53,7 +53,7 @@ export function NewRoom(){
                             onChange={e => setInputValue(e.target.value)}
                             value={inputValue}
                             />
-                        <Button type="submit" className="button">Criar sala</Button>
+                        <Button type="submit">Criar sala</Button>
                     </form>
                     <p>
                         Quer entrar em uma sala existente? 

@@ -6,62 +6,21 @@ import { useParams} from 'react-router-dom';
 import { useState, FormEvent } from 'react';
 import useAuth from '../hooks/AthContext';
 import { database } from '../services/Firebase';
-import {useEffect} from 'react';
+import {Questions} from '../components/Question';
+import {useRoom} from '../hooks/useRoom';
+
 
 type PathName = {
   id: string;
 }
 
-type author  = {
-  name: string,
-  avatar: string,
-}
-
-type Questions = Record<string, {
-  author: author,
-  content: string,
-  isAnswered: boolean,
-  isHighLight: boolean
-}>
-
-type ListQuestions = {
-  key: string,
-  content: string,
-  author: author,
-  isAnswered: boolean,
-  isHighLight: boolean
-}
-
-
 export function Room(){
 
-  const {user , signInWithPopup}= useAuth();
+  const {user}= useAuth();
   const params = useParams<PathName>();
   const paramsId: string = params.id;
   const [newQuestion, setNewQuestion] = useState('');
-  const [listQuestions, setlistQuestions] = useState<ListQuestions[]>([]);
-  const [title, settitle] = useState('');
-
-  useEffect(() => {
-    const roomRef = database.ref(`rooms/${params.id}`);
-
-
-    roomRef.on('value', (room: any) => {
-      const firebaseRoomData = room.val();
-      const Questions: Questions = firebaseRoomData.questions ?? {};
-      const ListQuestions = Object.entries(Questions).map(([key, value]) => {
-        return {
-          key:key,
-          content:value.content,
-          author:value.author,
-          isAnswered: value.isAnswered,
-          isHighLight: value.isHighLight
-        }
-      });
-      setlistQuestions(ListQuestions);
-      settitle(firebaseRoomData.title);
-    })
-  },[params.id]);
+  const {listQuestions, title} = useRoom(paramsId);
    
   async function createQuestion(event: FormEvent){
     event.preventDefault();
@@ -114,19 +73,23 @@ export function Room(){
                 <span>{user.displayName}</span>
               </div>
             }
-            <Button className="button" type="submit" disabled={!user}>Enviar Pergunta</Button>
+            <Button type="submit" disabled={!user}>Enviar Pergunta</Button>
           </div>
         </form>
         {listQuestions.length > 0 ? (
-         listQuestions.map(question => {
-          return(
-            <div>
-              
-            </div>
-          )
-         })
-        ): (
-          <div>
+          <div className="list-questions">
+            {listQuestions.map((question) => {
+              return(
+                <Questions
+                  key={question.key} 
+                  content={question.content}
+                  author={question.author}
+                />
+              )
+           })}
+          </div>
+        ):(
+          <div className="no-Questions">
             <span>Não tem perguntas nessa sala!</span>
           </div>
         )}
