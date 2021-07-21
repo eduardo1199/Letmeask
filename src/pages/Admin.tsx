@@ -3,9 +3,11 @@ import {Button} from '../components/Button';
 import '../styles/room.scss';
 import {RoomCode} from '../components/RoomCode';
 import { useParams} from 'react-router-dom';
-import useAuth from '../hooks/AthContext';
 import {Questions} from '../components/Question';
 import {useRoom} from '../hooks/useRoom';
+import deleteImg from '../images/delete.svg'
+import { database } from '../services/Firebase';
+import {useHistory} from 'react-router-dom';
 
 
 type PathName = {
@@ -15,10 +17,24 @@ type PathName = {
 
 export function AdminRoom(){
 
-  const {user}= useAuth();
   const params = useParams<PathName>();
   const paramsId: string = params.id;
   const {listQuestions, title} = useRoom(paramsId);
+  const history = useHistory();
+
+  async function  handleDeleteQuestion(questionId: string){
+    if(window.confirm('Você deseja excluir mesmo a pergunta ? ')){
+       await database.ref(`rooms/${paramsId}/questions/${questionId}`).remove();
+    }
+  }
+
+  async function handleEndRoom() {
+    database.ref(`rooms/${paramsId}`).update({
+      endedAt: new Date(),
+    })
+
+    history.push('/');
+  }
 
   return(
     <div id="page-room">
@@ -27,7 +43,7 @@ export function AdminRoom(){
           <img src={logoImg} alt="Logo" />
           <div className="header-admin">
             <RoomCode code={params.id} />
-            <Button isOutlined>Encerrar Salas</Button>
+            <Button isOutlined onClick={() => handleEndRoom()}>Encerrar Salas</Button>
           </div>
         </div>
       </header>
@@ -44,7 +60,11 @@ export function AdminRoom(){
                   key={question.key} 
                   content={question.content}
                   author={question.author}
-                />
+                >
+                  <button onClick={() => handleDeleteQuestion(question.key)}>
+                    <img src={deleteImg} alt="delete" />
+                  </button>
+                </Questions>
               )
            })}
           </div>

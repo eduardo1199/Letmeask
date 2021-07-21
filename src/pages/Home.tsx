@@ -35,6 +35,10 @@ export function Home(){
             alert("Sala Inexistente!")
             return;
         }
+
+        if(roomRef.val().endedAt){
+            alert("Essa sala está fechada");
+        }
         history.push(`/room/${sala}`);
     }
 
