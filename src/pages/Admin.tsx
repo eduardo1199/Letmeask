@@ -5,7 +5,9 @@ import {RoomCode} from '../components/RoomCode';
 import { useParams} from 'react-router-dom';
 import {Questions} from '../components/Question';
 import {useRoom} from '../hooks/useRoom';
-import deleteImg from '../images/delete.svg'
+import deleteImg from '../images/delete.svg';
+import checkImg from '../images/check.svg';
+import answerImg from '../images/answer.svg';
 import { database } from '../services/Firebase';
 import {useHistory} from 'react-router-dom';
 
@@ -26,6 +28,20 @@ export function AdminRoom(){
     if(window.confirm('Você deseja excluir mesmo a pergunta ? ')){
        await database.ref(`rooms/${paramsId}/questions/${questionId}`).remove();
     }
+  }
+
+  async function handleCheckQuestionAsAnswered(questionId: string){
+    await database.ref(`rooms/${paramsId}/questions/${questionId}`).update({
+      isAnswered:true
+    });
+
+  }
+
+  async function handleHightLightQuestion(questionId: string){
+    await database.ref(`rooms/${paramsId}/questions/${questionId}`).update({
+      isHighLight: true
+    });
+
   }
 
   async function handleEndRoom() {
@@ -60,7 +76,19 @@ export function AdminRoom(){
                   key={question.key} 
                   content={question.content}
                   author={question.author}
+                  isAnswered={question.isAnswered}
+                  isHighLight={question.isHighLight}
                 >
+                 {!question.isAnswered && (
+                    <>
+                      <button onClick={() => handleCheckQuestionAsAnswered(question.key)}>
+                        <img src={checkImg} alt="Marcar Pergunta como respondida" />
+                      </button>
+                      <button onClick={() => handleHightLightQuestion(question.key)}>
+                        <img src={answerImg} alt="Dar destaque da pergunta" />
+                      </button>
+                    </>
+                 )}
                   <button onClick={() => handleDeleteQuestion(question.key)}>
                     <img src={deleteImg} alt="delete" />
                   </button>

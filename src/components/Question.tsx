@@ -10,13 +10,15 @@ type Question = {
   content: string;
   author: Author;
   children?: ReactNode;
+  isAnswered?: boolean;
+  isHighLight?:boolean;
 }
 
 export function Questions({
-  content, author,children
+  content, author,children, isAnswered = false, isHighLight = false
 }: Question){
   return(
-    <div className="question">
+    <div className={`question ${isAnswered ? 'answered': ''} ${isHighLight && !isAnswered ? 'highLight' : ''}`}>
       <p>{content}</p>
       <footer>
         <div className="user-info">
